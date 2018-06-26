@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "download-year-pages": "node scripts/download-year-pages.js",
-    "parse-year-pages": "node scripts/parse-year-pages.js"
+    "parse-year-pages": "node scripts/parse-year-pages.js",
+    "get-wiki-pageviews": "node scripts/get-wiki-pageviews.js",
+    "get-people-pageviews": "node scripts/get-people-pageviews.js",
+    "join-people": "node scripts/join-people.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +17,7 @@
     "cheerio": "1.0.0-rc.2",
     "d3": "5.5.0",
     "mkdirp": "0.5.1",
+    "pageviews": "1.4.0",
     "wikijs": "4.8.0"
   }
 }
