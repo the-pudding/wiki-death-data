@@ -1,0 +1,17 @@
+{
+  "name": "wiki-death",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "download-year-pages": "node scripts/download-year-pages.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "1.0.0-rc.2",
+    "mkdirp": "0.5.1",
+    "wikijs": "4.8.0"
+  }
+}
