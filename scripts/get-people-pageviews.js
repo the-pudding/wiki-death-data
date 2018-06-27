@@ -35,7 +35,7 @@ async function init() {
   for (const item of data) {
     await query(item)
       .then(() => {
-        console.log(item.date_of_death);
+        console.log(item.date_of_death, item.year_of_death, item.name);
       })
       .catch(console.error);
   }
