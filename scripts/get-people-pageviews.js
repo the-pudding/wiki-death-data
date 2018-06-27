@@ -32,12 +32,13 @@ async function init() {
     fs.readFileSync('./output/all-deaths-2015-2018.csv', 'utf-8')
   );
 
+  // keep index just for progress monitoring
+  let i = 0;
   for (const item of data) {
     await query(item)
-      .then(() => {
-        console.log(item.date_of_death, item.year_of_death, item.name);
-      })
+      .then(() => console.log(`${i} of ${data.length}`))
       .catch(console.error);
+    i += 1;
   }
 }
 
