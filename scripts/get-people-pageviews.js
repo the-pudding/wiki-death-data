@@ -13,7 +13,7 @@ function query(person) {
         agent: 'user',
         granularity: 'daily',
         start: '20150701',
-        end: '20180626',
+        end: '20180626', //inclusive
         article: person.name
       })
       .then(result => {

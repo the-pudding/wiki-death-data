@@ -7,10 +7,10 @@ const wikiPageviewData = d3.csvParse(
   fs.readFileSync('./output/wiki-pageviews.csv', 'utf-8')
 );
 
-function calculateTraffic({ views, timestamp }) {
+function calculateTraffic({ article, views, timestamp }) {
   const match = wikiPageviewData.find(d => d.timestamp === timestamp);
   if (match) return views / match.views;
-  console.error('no match', ppd);
+  console.error('no match', timestamp);
   return null;
 }
 

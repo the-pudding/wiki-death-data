@@ -10,7 +10,7 @@ pageviews
     agent: 'user',
     granularity: 'daily',
     start: '2015070100',
-    end: '2018062600'
+    end: '2018062700' //exclusive
   })
   .then(result => {
     const output = d3.csvFormat(result.items);
