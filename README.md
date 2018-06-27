@@ -4,11 +4,11 @@
 
 [Screencasts](https://www.youtube.com/playlist?list=PLsuhXm2zs07JuSfrNentA3DxAbaFO7ay2) of the story as it is created.
 
-## Installation
+## Install
 
 Clone the repo and run `npm i`
 
-## Replication
+## Reproduce
 
 ### 1) `npm run download-year-pages`
 
