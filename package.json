@@ -8,7 +8,9 @@
     "parse-year-pages": "node scripts/parse-year-pages.js",
     "get-wiki-pageviews": "node scripts/get-wiki-pageviews.js",
     "get-people-pageviews": "node scripts/get-people-pageviews.js",
-    "join-people": "node scripts/join-people.js"
+    "join-people": "node scripts/join-people.js",
+    "explore": "node scripts/explore.js",
+    "filter-population": "node scripts/filter-population.js"
   },
   "keywords": [],
   "author": "",
