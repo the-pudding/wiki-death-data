@@ -19,18 +19,24 @@ const months = [
   'December'
 ];
 
+function checkForDate(str) {
+  const split = str.split(' ');
+  const isMonth = months.includes(split[0]);
+  const isDate = !isNaN(split[1]);
+  return isMonth && isDate;
+}
+
 function parseLi({ sel, year }) {
   const isPerson = !sel.find('ul').length;
 
   if (isPerson) {
     const a = sel.find('a');
-    const numATags = a.length;
-    // name
-    // there are 3 a tags when the date is baked in
-    const nameIndex = numATags === 3 ? 1 : 0;
-    const nameSel = a.eq(nameIndex);
-    const name = nameSel.attr('title');
-    const link = nameSel.attr('href');
+
+    const firstA = a.first();
+    const firstTitle = firstA.attr('title');
+    const isDate = checkForDate(firstTitle);
+    const name = isDate ? a.eq(1).attr('title') : firstTitle;
+    const link = isDate ? a.eq(1).attr('href') : firstA.attr('href');
 
     // birth year
     const birthSel = a.eq(-1);
@@ -38,7 +44,7 @@ function parseLi({ sel, year }) {
 
     // date of death
     let date_of_death = null;
-    if (numATags === 3) {
+    if (isDate) {
       date_of_death = a.eq(0).attr('title');
     } else {
       const parentLi = sel.parent().parent();
@@ -50,8 +56,7 @@ function parseLi({ sel, year }) {
 
     // description
     const text = sel.text();
-    const sentence =
-      numATags === 3 ? text.replace(`${date_of_death} – `, '') : text;
+    const sentence = isDate ? text.replace(`${date_of_death} – `, '') : text;
 
     const withoutName = sentence.replace(`${name}, `, '');
     const bIndex = withoutName.lastIndexOf(' (b.');
