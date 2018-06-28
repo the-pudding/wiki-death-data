@@ -10,7 +10,8 @@
     "get-people-pageviews": "node scripts/get-people-pageviews.js",
     "join-people": "node scripts/join-people.js",
     "explore": "node scripts/explore.js",
-    "filter-population": "node scripts/filter-population.js"
+    "filter-population": "node scripts/filter-population.js",
+    "prepare-web": "node scripts/prepare-web.js"
   },
   "keywords": [],
   "author": "",
