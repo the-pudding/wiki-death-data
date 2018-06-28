@@ -27,9 +27,8 @@ function init() {
   // 250k = 135
   // percent traffic
   // 0.05% = 227
-  // 0.1% = 130
-  const filtered = data.filter(d => d.max_percent_traffic >= 0.0005);
-  filtered.sort((a, b) => d3.ascending(a.max_views, b.max_views));
+  // 0.1% = 130 ~ 250k
+  const filtered = data.filter(d => d.max_percent_traffic >= 0.001);
   const output = d3.csvFormat(filtered);
   fs.writeFileSync('./output/filtered.csv', output);
 }
