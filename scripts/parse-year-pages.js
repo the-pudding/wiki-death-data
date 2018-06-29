@@ -3,6 +3,7 @@ const mkdirp = require('mkdirp');
 const cheerio = require('cheerio');
 const d3 = require('d3');
 
+const START = { month: 6, year: 2015 };
 const inputDir = './output/year-pages';
 const months = [
   'January',
@@ -77,11 +78,16 @@ function parseLi({ sel, year }) {
   return null;
 }
 
+function checkValidStart(year, monthIndex) {
+  if (+year === START.year && monthIndex < START.month) return false;
+  return true;
+}
+
 function extractPeople(file) {
   const html = fs.readFileSync(`${inputDir}/${file}`, 'utf-8');
   const $ = cheerio.load(html);
 
-  const peopleByMonth = months.map(month => {
+  const peopleByMonth = months.map((month, monthIndex) => {
     const parent = $(`#${month}_2`).parent();
     const ul = parent.nextAll('ul').eq(0);
     const year = file.replace('.html', '');
@@ -89,7 +95,7 @@ function extractPeople(file) {
     const output = [];
     ul.find('li').each((i, el) => {
       const person = parseLi({ sel: $(el), year });
-      if (person) output.push(person);
+      if (person && checkValidStart(year, monthIndex)) output.push(person);
     });
     return output;
   });
@@ -102,6 +108,7 @@ function init() {
 
   const peopleByYear = files.map(extractPeople);
   const flatPeople = [].concat(...peopleByYear);
+
   const output = d3.csvFormat(flatPeople);
 
   mkdirp('./output');
