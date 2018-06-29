@@ -9,12 +9,13 @@ function getID(str) {
 
 function getPageviews(person) {
   const id = getID(person.link);
+  const { pageid } = person;
   const data = d3.csvParse(
     fs.readFileSync(`./output/people-joined/${id}.csv`, 'utf-8')
   );
 
   const output = data.map(({ timestamp, views, percent_traffic }) => ({
-    id,
+    pageid,
     timestamp: timestamp.substring(0, 8),
     views,
     percent_traffic: (+percent_traffic).toFixed(8)
