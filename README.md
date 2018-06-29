@@ -35,3 +35,19 @@ Use the wiki pageviews api to get the daily pageviews for each person in our ful
 #### 5) `npm run join-people`
 
 Join all three sources into a single csv for each person that contains the daily pageviews, percent traffic, and metadata.
+
+#### 6) `npm run explore`
+
+Calculates a bunch of summary statistics for each person's pageviews
+
+#### 7) `npm run filter-population`
+
+Reduces the data to people who satisfy some quantiative criteria
+
+#### 8) `npm run add-details`
+
+Gets more detail info on each person
+
+#### 9) `npm run prepare-web`
+
+Consolidates and optimizes data for web presentation

@@ -31,7 +31,7 @@ function init() {
   );
 
   const population = d3.csvParse(
-    fs.readFileSync('./output/filtered.csv', 'utf-8')
+    fs.readFileSync('./output/details.csv', 'utf-8')
   );
 
   const populationLinks = population.map(d => d.link);
@@ -40,7 +40,6 @@ function init() {
   const dataAllFiltered = dataAll.filter(d => populationLinks.includes(d.link));
 
   const peopleData = dataAllFiltered.map(d => ({
-    id: getID(d.link),
     ...d,
     ...population.find(p => p.link === d.link)
   }));
