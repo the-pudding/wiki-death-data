@@ -1,29 +1,37 @@
 const margin = { top: 10, right: 30, bottom: 30, left: 60 };
-const width = 9600 - margin.left - margin.right;
+const width = 500 - margin.left - margin.right;
 const height = 500 - margin.top - margin.bottom;
-
-const $name = d3
-  .select('body')
-  .append('p')
-  .attr('class', 'name');
-
-const $svg = d3
-  .select('body')
-  .append('svg')
-  .attr('width', width + margin.left + margin.right)
-  .attr('height', height + margin.top + margin.bottom);
-
-const $g = $svg
-  .append('g')
-  .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
 function setupChart(data) {
   const [peopleData, pageviewData] = data;
-  const person = peopleData[34];
-  const pageviews = pageviewData.filter(d => d.pageid === person.pageid);
-  console.log({ person, pageviews });
 
-  $name.text(person.display);
+  const joinedData = peopleData.map(d => ({
+    ...d,
+    pageviews: pageviewData.filter(p => p.pageid === d.pageid)
+  }));
+
+  const $person = d3
+    .select('main')
+    .selectAll('.person')
+    .data(joinedData)
+    .enter()
+    .append('div')
+    .attr('class', 'person');
+
+  $person
+    .append('p')
+    .attr('class', 'name')
+    .text(d => d.display);
+
+  const $svg = $person.append('svg');
+
+  $svg
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom);
+
+  const $g = $svg.append('g');
+
+  $g.attr('transform', `translate(${margin.left}, ${margin.top})`);
 
   const $axisX = $g.append('g').attr('class', 'g-axis axis--x');
   const $axisY = $g.append('g').attr('class', 'g-axis axis--y');
@@ -32,12 +40,12 @@ function setupChart(data) {
 
   const scaleX = d3
     .scaleTime()
-    .domain(d3.extent(pageviews, d => d.date))
+    .domain(d3.extent(pageviewData, d => d.date))
     .range([0, width]);
 
   const scaleY = d3
     .scaleLinear()
-    .domain([0, person.max_views])
+    .domain([0, d3.max(peopleData, d => d.max_views)])
     .range([height, 0]);
 
   const line = d3
@@ -46,16 +54,16 @@ function setupChart(data) {
     .y(d => scaleY(d.views))
     .defined(d => d.date);
 
-  $path.attr('d', line(pageviews));
+  $path.datum(d => d.pageviews).attr('d', line);
 
-  $vis
-    .selectAll('circle')
-    .data(pageviews)
-    .enter()
-    .append('circle')
-    .attr('cx', d => scaleX(d.date))
-    .attr('cy', d => scaleY(d.views))
-    .attr('r', 2);
+  // $vis
+  //   .selectAll('circle')
+  //   .data(pageviews)
+  //   .enter()
+  //   .append('circle')
+  //   .attr('cx', d => scaleX(d.date))
+  //   .attr('cy', d => scaleY(d.views))
+  //   .attr('r', 2);
 
   const axisY = d3.axisLeft(scaleY);
   $axisY.call(axisY);
