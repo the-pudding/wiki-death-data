@@ -36,6 +36,7 @@ function parseLi({ sel, year, monthIndex }) {
     const firstA = a.first();
     const firstTitle = firstA.attr('title');
     const isDate = checkForDate(firstTitle);
+    const name = isDate ? a.eq(1).attr('title') : firstTitle;
     const link = isDate ? a.eq(1).attr('href') : firstA.attr('href');
 
     // birth year
@@ -60,6 +61,7 @@ function parseLi({ sel, year, monthIndex }) {
     const timestamp_of_death = `${year}${monthPad}${datePad}`;
     return {
       link,
+      name,
       year_of_birth,
       year_of_death,
       date_of_death,
