@@ -27,7 +27,7 @@ function checkForDate(str) {
   return isMonth && isDate;
 }
 
-function parseLi({ sel, year }) {
+function parseLi({ sel, year, monthIndex }) {
   const isPerson = !sel.find('ul').length;
 
   if (isPerson) {
@@ -36,7 +36,6 @@ function parseLi({ sel, year }) {
     const firstA = a.first();
     const firstTitle = firstA.attr('title');
     const isDate = checkForDate(firstTitle);
-    const name = isDate ? a.eq(1).attr('title') : firstTitle;
     const link = isDate ? a.eq(1).attr('href') : firstA.attr('href');
 
     // birth year
@@ -55,23 +54,16 @@ function parseLi({ sel, year }) {
         .attr('title');
     }
 
-    // description
-    const text = sel.text();
-    const sentence = isDate ? text.replace(`${date_of_death} – `, '') : text;
-
-    const withoutName = sentence.replace(`${name}, `, '');
-    const bIndex = withoutName.lastIndexOf(' (b.');
-
-    const description = withoutName.substring(0, bIndex);
-
     const year_of_death = year;
+    const monthPad = d3.format('02')(monthIndex);
+    const datePad = d3.format('02')(date_of_death.split(' ')[1]);
+    const timestamp_of_death = `${year}${monthPad}${datePad}`;
     return {
-      name,
       link,
       year_of_birth,
       year_of_death,
       date_of_death,
-      description
+      timestamp_of_death
     };
   }
 
@@ -94,7 +86,7 @@ function extractPeople(file) {
 
     const output = [];
     ul.find('li').each((i, el) => {
-      const person = parseLi({ sel: $(el), year });
+      const person = parseLi({ sel: $(el), year, monthIndex });
       if (person && checkValidStart(year, monthIndex)) output.push(person);
     });
     return output;
