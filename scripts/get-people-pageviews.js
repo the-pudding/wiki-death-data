@@ -8,7 +8,7 @@ function getEnd() {
   const d = new Date();
   const year = d.getFullYear();
   const month = d3.format('02')(d.getMonth());
-  const date = d3.format('02')(d.getDate());
+  const date = d3.format('02')(d.getDate() + 1);
   return `${year}${month}${date}`;
 }
 
