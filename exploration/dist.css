@@ -1,1 +1,1 @@
-*{box-sizing:border-box}main{display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}.person{margin:1rem}svg{background:#efefef}svg .pageviews{fill:none;stroke:#000}svg circle{fill:none;stroke:red}
+*{box-sizing:border-box}main{display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}.person{margin:1rem}svg{background:#efefef}svg .g-axis text{fill:grey}svg .g-axis line,svg .g-axis path{stroke:grey}svg .pageviews{fill:none;stroke:#000}svg circle{fill:none;stroke:red}

@@ -1,3 +1,5 @@
+const METRIC = 'percent_traffic';
+
 const margin = { top: 10, right: 30, bottom: 30, left: 60 };
 const width = 500 - margin.left - margin.right;
 const height = 500 - margin.top - margin.bottom;
@@ -43,29 +45,31 @@ function setupChart(data) {
     .domain(d3.extent(pageviewData, d => d.date))
     .range([0, width]);
 
+  const max = d3.max(peopleData, d => d[`max_${METRIC}`]);
+
   const scaleY = d3
     .scaleLinear()
-    .domain([0, d3.max(peopleData, d => d.max_views)])
+    .domain([0, max])
     .range([height, 0]);
 
   const line = d3
     .line()
     .x(d => scaleX(d.date))
-    .y(d => scaleY(d.views))
+    .y(d => scaleY(d[METRIC]))
     .defined(d => d.date);
 
   $path.datum(d => d.pageviews).attr('d', line);
 
   // $vis
   //   .selectAll('circle')
-  //   .data(pageviews)
+  //   .data(d => d.pageviews)
   //   .enter()
   //   .append('circle')
   //   .attr('cx', d => scaleX(d.date))
-  //   .attr('cy', d => scaleY(d.views))
+  //   .attr('cy', d => scaleY(d[METRIC]))
   //   .attr('r', 2);
 
-  const axisY = d3.axisLeft(scaleY);
+  const axisY = d3.axisLeft(scaleY).tickFormat(d3.format('.3%'));
   $axisY.call(axisY);
 
   const axisX = d3.axisBottom(scaleX);
