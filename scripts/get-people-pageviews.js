@@ -7,8 +7,8 @@ const outputDir = './output/people-pageviews';
 function getEnd() {
   const d = new Date();
   const year = d.getFullYear();
-  const month = d3.format('02')(d.getMonth());
-  const date = d3.format('02')(d.getDate() + 1);
+  const month = d3.format('02')(d.getMonth() + 1);
+  const date = d3.format('02')(d.getDate());
   return `${year}${month}${date}`;
 }
 
