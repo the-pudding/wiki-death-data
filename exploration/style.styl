@@ -1,13 +1,6 @@
 *
   box-sizing border-box
 
-main
-	display flex
-	flex-wrap wrap
-
-.person
-	margin 1rem
-
 svg
 	background #efefef
 
@@ -17,10 +10,21 @@ svg
 		line, path
 			stroke gray
 
-	.pageviews
-		fill none
-		stroke #000
+	.g-person
+		path
+			fill none
+			stroke #000
+			stroke-opacity 0.2
+		&.is-active
+			path
+				stroke-opacity 1
+				stroke red
+			
 
-	circle
-		fill none
-		stroke red
+input
+	display block
+	width 90%
+	margin 0 auto
+
+.name
+	text-align center

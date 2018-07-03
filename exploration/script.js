@@ -1,31 +1,32 @@
 const METRIC = 'percent_traffic';
+const $main = d3.select('main');
 
 const margin = { top: 10, right: 30, bottom: 30, left: 60 };
-const width = 500 - margin.left - margin.right;
+const width = 960 - margin.left - margin.right;
 const height = 500 - margin.top - margin.bottom;
+
+function handleSliderInput() {
+  const val = +this.value;
+  $main
+    .selectAll('.g-person')
+    .classed('is-active', d => d.person_index === val);
+
+  const $sel = $main.selectAll('.g-person').filter(d => d.person_index === val);
+  $sel.raise();
+  const { display } = $sel.datum();
+  $main.select('.name').text(display);
+}
 
 function setupChart(data) {
   const [peopleData, pageviewData] = data;
 
-  const joinedData = peopleData.map(d => ({
+  const joinedData = peopleData.map((d, i) => ({
     ...d,
-    pageviews: pageviewData.filter(p => p.pageid === d.pageid)
+    pageviews: pageviewData.filter(p => p.pageid === d.pageid),
+    person_index: i
   }));
 
-  const $person = d3
-    .select('main')
-    .selectAll('.person')
-    .data(joinedData)
-    .enter()
-    .append('div')
-    .attr('class', 'person');
-
-  $person
-    .append('p')
-    .attr('class', 'name')
-    .text(d => d.display);
-
-  const $svg = $person.append('svg');
+  const $svg = $main.append('svg');
 
   $svg
     .attr('width', width + margin.left + margin.right)
@@ -37,8 +38,17 @@ function setupChart(data) {
 
   const $axisX = $g.append('g').attr('class', 'g-axis axis--x');
   const $axisY = $g.append('g').attr('class', 'g-axis axis--y');
+
   const $vis = $g.append('g').attr('class', 'g-vis');
-  const $path = $vis.append('path').attr('class', 'pageviews');
+
+  const $person = $vis
+    .selectAll('.g-person')
+    .data(joinedData)
+    .enter()
+    .append('g')
+    .attr('class', 'g-person');
+
+  const $path = $person.append('path');
 
   const scaleX = d3
     .scaleTime()
@@ -56,7 +66,7 @@ function setupChart(data) {
     .line()
     .x(d => scaleX(d.date))
     .y(d => scaleY(d[METRIC]))
-    .defined(d => d.date);
+    .defined(d => d[METRIC]);
 
   $path.datum(d => d.pageviews).attr('d', line);
 
@@ -74,6 +84,16 @@ function setupChart(data) {
 
   const axisX = d3.axisBottom(scaleX);
   $axisX.call(axisX).attr('transform', `translate(0, ${height})`);
+
+  $main
+    .append('input')
+    .attr('type', 'range')
+    .attr('value', 0)
+    .attr('min', 0)
+    .attr('max', joinedData.length)
+    .on('input', handleSliderInput);
+
+  $main.append('p').attr('class', 'name');
 }
 
 function convertTimestampToDate(timestamp) {
