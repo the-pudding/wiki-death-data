@@ -6,8 +6,8 @@ const outputDir = './output';
 function clean(data) {
   return data.map(d => ({
     ...d,
-    views: +d.views,
-    percent_traffic: +d.percent_traffic
+    views: d.views.length ? +d.views : null,
+    percent_traffic: d.percent_traffic.length ? +d.percent_traffic : null
   }));
 }
 
@@ -21,10 +21,12 @@ function convertTimestampToDate(timestamp) {
 function getMedianSides({ person, dailyData, metric }) {
   const { year_of_death, date_of_death } = person;
   const deathDate = new Date(`${date_of_death} ${year_of_death}`);
+
   const before = dailyData.filter(d => {
     const date = convertTimestampToDate(d.timestamp);
     return date < deathDate;
   });
+  // console.log(before);
   const after = dailyData.filter(d => {
     const date = convertTimestampToDate(d.timestamp);
     return date > deathDate;
@@ -55,9 +57,11 @@ function calculate(person) {
     metric: 'percent_traffic'
   });
 
-  const max_change_views = max_views / median_views;
-  const max_change_percent_traffic =
-    max_percent_traffic / median_percent_traffic;
+  const max_change_baseline_views = max_views / medianViewsObj.medianBefore;
+
+  const max_change_baseline_percent_traffic =
+    max_percent_traffic / medianPercentTrafficObj.medianBefore;
+
   return {
     link: person.link,
     median_views,
@@ -68,8 +72,8 @@ function calculate(person) {
     median_percent_traffic_after: medianPercentTrafficObj.medianAfter,
     max_views,
     max_percent_traffic,
-    max_change_views,
-    max_change_percent_traffic
+    max_change_baseline_views,
+    max_change_baseline_percent_traffic
   };
 }
 

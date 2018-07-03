@@ -58,7 +58,7 @@ function getPageviews(person) {
       views,
       percent_traffic: (+percent_traffic).toFixed(8),
       change_baseline_views: +views / median_views_before,
-      change_basline_percent_traffic:
+      change_baseline_percent_traffic:
         +percent_traffic / median_percent_traffic_before
     })
   );

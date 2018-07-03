@@ -10,8 +10,6 @@ function clean(data) {
     median_percent_traffic: +d.median_percent_traffic,
     max_views: +d.max_views,
     max_percent_traffic: +d.max_percent_traffic,
-    max_change_views: +d.max_change_views,
-    max_change_percent_traffic: +d.max_change_percent_traffic
   }));
 }
 
