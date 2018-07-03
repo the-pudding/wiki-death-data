@@ -18,7 +18,7 @@ function convertTimestampToDate(timestamp) {
   return new Date(year, month, date);
 }
 
-function getMedianSides({ person, dailyData }) {
+function getMedianSides({ person, dailyData, metric }) {
   const { year_of_death, date_of_death } = person;
   const deathDate = new Date(`${date_of_death} ${year_of_death}`);
   const before = dailyData.filter(d => {
@@ -29,9 +29,9 @@ function getMedianSides({ person, dailyData }) {
     const date = convertTimestampToDate(d.timestamp);
     return date > deathDate;
   });
-  const median_views_before = d3.median(before, d => d.views);
-  const median_views_after = d3.median(after, d => d.views);
-  return { median_views_before, median_views_after };
+  const medianBefore = d3.median(before, d => d[metric]);
+  const medianAfter = d3.median(after, d => d[metric]);
+  return { medianBefore, medianAfter };
 }
 
 function calculate(person) {
@@ -44,19 +44,28 @@ function calculate(person) {
   const median_percent_traffic = d3.median(dailyData, d => d.percent_traffic);
   const max_views = d3.max(dailyData, d => d.views);
   const max_percent_traffic = d3.max(dailyData, d => d.percent_traffic);
-  const { median_views_before, median_views_after } = getMedianSides({
+  const medianViewsObj = getMedianSides({
     person,
-    dailyData
+    dailyData,
+    metric: 'views'
   });
+  const medianPercentTrafficObj = getMedianSides({
+    person,
+    dailyData,
+    metric: 'percent_traffic'
+  });
+
   const max_change_views = max_views / median_views;
   const max_change_percent_traffic =
     max_percent_traffic / median_percent_traffic;
   return {
     link: person.link,
     median_views,
-    median_views_before,
-    median_views_after,
+    median_views_before: medianViewsObj.medianBefore,
+    median_views_after: medianViewsObj.medianAfter,
     median_percent_traffic,
+    median_percent_traffic_before: medianPercentTrafficObj.medianBefore,
+    median_percent_traffic_after: medianPercentTrafficObj.medianAfter,
     max_views,
     max_percent_traffic,
     max_change_views,
