@@ -28,6 +28,8 @@ function checkForDate(str) {
 }
 
 function parseLi({ sel, year, monthIndex }) {
+  if (sel.text().startsWith('Date unknown')) return null;
+
   const isPerson = !sel.find('ul').length;
 
   if (isPerson) {
@@ -56,7 +58,7 @@ function parseLi({ sel, year, monthIndex }) {
     }
 
     const year_of_death = year;
-    const monthPad = d3.format('02')(monthIndex);
+    const monthPad = d3.format('02')(monthIndex + 1);
     const datePad = d3.format('02')(date_of_death.split(' ')[1]);
     const timestamp_of_death = `${year}${monthPad}${datePad}`;
     return {

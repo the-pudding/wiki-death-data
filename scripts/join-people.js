@@ -18,7 +18,7 @@ function createDateIndex() {
   timestampIndex = dates.map(d => getTimestamp({ date: d, suffix: '00' }));
 }
 
-function calculateTraffic({ article, views, timestamp }) {
+function calculateTraffic({ views, timestamp }) {
   const match = wikiPageviewData.find(d => d.timestamp === timestamp);
   if (match) return views / match.views;
   console.error('no match', timestamp);
