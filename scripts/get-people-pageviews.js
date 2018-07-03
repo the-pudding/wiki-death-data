@@ -2,15 +2,8 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const pageviews = require('pageviews');
 const d3 = require('d3');
+const getTimestamp = require('../helpers/get-timestamp');
 const outputDir = './output/people-pageviews';
-
-function getEnd() {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = d3.format('02')(d.getMonth() + 1);
-  const date = d3.format('02')(d.getDate());
-  return `${year}${month}${date}`;
-}
 
 function query(person) {
   return new Promise((resolve, reject) => {
@@ -21,7 +14,7 @@ function query(person) {
         agent: 'user',
         granularity: 'daily',
         start: '20150701',
-        end: getEnd(),
+        end: getTimestamp({}),
         article: person.name
       })
       .then(result => {
