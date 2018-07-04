@@ -44,7 +44,7 @@ async function init() {
   mkdirp(outputDir);
 
   const peopleData = d3.csvParse(
-    fs.readFileSync('./output/filtered.csv', 'utf-8')
+    fs.readFileSync('./output/people--filtered.csv', 'utf-8')
   );
 
   const withDetails = [];
@@ -64,7 +64,7 @@ async function init() {
   }
 
   const output = d3.csvFormat(withDetails);
-  fs.writeFileSync('./output/details.csv', output);
+  fs.writeFileSync('./output/people--details.csv', output);
 }
 
 init();

@@ -19,42 +19,38 @@ Clone the repo and run `npm i`
 
 Individual steps below, or run `make reproduce`
 
-##### 1) `npm run download-year-pages`
+##### `npm run download-year-pages`
 
 Download the HTML for the year event pages from wiki that contain a list of all notable deaths (2015-2018).
 
-#### 2) `npm run parse-year-pages`
+#### `npm run parse-year-pages`
 
 Extract every person and their meta data from the event pages to create a single csv of all notable deaths from 2015-2018.
 
-#### 3) `npm run get-wiki-pageviews`
+#### `npm run get-wiki-pageviews`
 
 Use wiki pageviews api to get the daily pageviews for en.wikipedia.org so that we can calculate percent of traffic for each person and look into seasonality in the data.
 
-#### 4) `npm run get-people-pageviews`
+#### `npm run get-people-pageviews`
 
 Use the wiki pageviews api to get the daily pageviews for each person in our full list of notable deaths.
 
-#### 5) `npm run join-people`
-
-Join all three sources into a single csv for each person that contains the daily pageviews, percent traffic, and metadata.
-
-#### 6) `npm run by-week`
+#### `npm run by-week`
 
 Bin each person's pageviews by week.
 
-#### 7) `npm run explore`
+#### `npm run stats`
 
-Calculates a bunch of summary statistics for each person's pageviews
+Calculates a bunch of summary statistics for each person
 
-#### 8) `npm run filter-population`
+#### `npm run filter-population`
 
 Reduces the data to people who satisfy some quantiative criteria
 
-#### 9) `npm run add-details`
+#### `npm run add-details`
 
 Gets more detail info on each person
 
-#### 10) `npm run prepare-web`
+#### `npm run prepare-web`
 
 Consolidates and optimizes data for web presentation

@@ -2,8 +2,61 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const pageviews = require('pageviews');
 const d3 = require('d3');
+const generateDateRange = require('../helpers/generate-date-range');
 const getTimestamp = require('../helpers/get-timestamp');
 const outputDir = './output/people-pageviews';
+
+const wikiPageviewData = d3.csvParse(
+  fs.readFileSync('./output/wiki-pageviews.csv', 'utf-8')
+);
+
+let timestampIndex = null;
+
+function createDateIndex() {
+  const startDate = new Date(2015, 6, 1);
+  const endDate = new Date();
+  const dates = generateDateRange(startDate, endDate);
+  timestampIndex = dates.map(d => getTimestamp({ date: d }));
+}
+
+function calculateShare({ views, timestamp }) {
+  const match = wikiPageviewData.find(d => d.timestamp === timestamp);
+  if (match) return views / match.views;
+  console.error('no match', timestamp);
+  return null;
+}
+
+function createFiller(t, i) {
+  return {
+    timestamp: t,
+    timestamp_index: i,
+    views: null,
+    share: null
+  };
+}
+
+function clean(data) {
+  return data.map(d => ({
+    timestamp: d.timestamp.substring(0, 8),
+    views: d.views
+  }));
+}
+
+function addInfo(data) {
+  const withInfo = data.map(d => ({
+    ...d,
+    timestamp_index: timestampIndex.findIndex(t => t === d.timestamp),
+    share: calculateShare(d)
+  }));
+
+  const withFiller = timestampIndex.map((t, i) => {
+    const match = withInfo.find(m => m.timestamp === t);
+    if (match) return match;
+    return createFiller(t, i);
+  });
+
+  return withFiller;
+}
 
 function query(person) {
   return new Promise((resolve, reject) => {
@@ -18,7 +71,9 @@ function query(person) {
         article: person.name
       })
       .then(result => {
-        const output = d3.csvFormat(result.items);
+        const data = clean(result.items);
+        const withInfo = addInfo(data);
+        const output = d3.csvFormat(withInfo);
         fs.writeFileSync(`${outputDir}/${id}.csv`, output);
         resolve();
       })
@@ -28,12 +83,12 @@ function query(person) {
 
 async function init() {
   mkdirp(outputDir);
+  createDateIndex();
 
   const data = d3.csvParse(
-    fs.readFileSync('./output/all-deaths-2015-2018.csv', 'utf-8')
+    fs.readFileSync('./output/people--all-deaths.csv', 'utf-8')
   );
 
-  // keep index just for progress monitoring
   let i = 0;
   for (const item of data) {
     await query(item)

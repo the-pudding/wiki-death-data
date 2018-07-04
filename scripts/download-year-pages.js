@@ -9,9 +9,7 @@ function download(year) {
   wiki()
     .page(year)
     .then(page => page.html())
-    .then(response => {
-      fs.writeFileSync(`${outputDir}/${year}.html`, response);
-    });
+    .then(response => fs.writeFileSync(`${outputDir}/${year}.html`, response));
 }
 
 mkdirp(outputDir);

@@ -8,9 +8,8 @@
     "parse-year-pages": "node scripts/parse-year-pages.js",
     "get-wiki-pageviews": "node scripts/get-wiki-pageviews.js",
     "get-people-pageviews": "node scripts/get-people-pageviews.js",
-    "join-people": "node scripts/join-people.js",
     "by-week": "node scripts/by-week.js",
-    "explore": "node scripts/explore.js",
+    "stats": "node scripts/stats.js",
     "filter-population": "node scripts/filter-population.js",
     "add-details": "node scripts/add-details.js",
     "prepare-web": "node scripts/prepare-web.js"

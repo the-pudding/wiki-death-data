@@ -7,7 +7,7 @@ function clean(data) {
   return data.map(d => ({
     ...d,
     views: d.views.length ? +d.views : null,
-    percent_traffic: d.percent_traffic.length ? +d.percent_traffic : null
+    share: d.share.length ? +d.share : null
   }));
 }
 
@@ -39,41 +39,40 @@ function getMedianSides({ person, dailyData, metric }) {
 function calculate(person) {
   const id = person.link.replace('/wiki/', '');
   const dailyData = clean(
-    d3.csvParse(fs.readFileSync(`./output/people-joined/${id}.csv`, 'utf-8'))
+    d3.csvParse(fs.readFileSync(`./output/people-pageviews/${id}.csv`, 'utf-8'))
   );
 
   const median_views = d3.median(dailyData, d => d.views);
-  const median_percent_traffic = d3.median(dailyData, d => d.percent_traffic);
+  const median_share = d3.median(dailyData, d => d.share);
   const max_views = d3.max(dailyData, d => d.views);
-  const max_percent_traffic = d3.max(dailyData, d => d.percent_traffic);
+  const max_share = d3.max(dailyData, d => d.share);
   const medianViewsObj = getMedianSides({
     person,
     dailyData,
     metric: 'views'
   });
-  const medianPercentTrafficObj = getMedianSides({
+  const medianShareObj = getMedianSides({
     person,
     dailyData,
-    metric: 'percent_traffic'
+    metric: 'share'
   });
 
-  const max_change_baseline_views = max_views / medianViewsObj.medianBefore;
+  const max_change_before_views = max_views / medianViewsObj.medianBefore;
 
-  const max_change_baseline_percent_traffic =
-    max_percent_traffic / medianPercentTrafficObj.medianBefore;
+  const max_change_before_share = max_share / medianShareObj.medianBefore;
 
   return {
-    link: person.link,
+    ...person,
     median_views,
     median_views_before: medianViewsObj.medianBefore,
     median_views_after: medianViewsObj.medianAfter,
-    median_percent_traffic,
-    median_percent_traffic_before: medianPercentTrafficObj.medianBefore,
-    median_percent_traffic_after: medianPercentTrafficObj.medianAfter,
+    median_share,
+    median_share_before: medianShareObj.medianBefore,
+    median_share_after: medianShareObj.medianAfter,
     max_views,
-    max_percent_traffic,
-    max_change_baseline_views,
-    max_change_baseline_percent_traffic
+    max_share,
+    max_change_before_views,
+    max_change_before_share
   };
 }
 
@@ -81,12 +80,12 @@ function init() {
   mkdirp(outputDir);
 
   const data = d3.csvParse(
-    fs.readFileSync('./output/all-deaths-2015-2018.csv', 'utf-8')
+    fs.readFileSync('./output/people--all-deaths.csv', 'utf-8')
   );
 
   const withAverages = data.map(calculate);
   const output = d3.csvFormat(withAverages);
-  fs.writeFileSync('./output/explore.csv', output);
+  fs.writeFileSync('./output/people--stats.csv', output);
 }
 
 init();

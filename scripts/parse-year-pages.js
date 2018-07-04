@@ -4,8 +4,7 @@ const cheerio = require('cheerio');
 const d3 = require('d3');
 
 const START = { month: 6, year: 2015 };
-const inputDir = './output/year-pages';
-const months = [
+const MONTHS = [
   'January',
   'February',
   'March',
@@ -19,10 +18,12 @@ const months = [
   'November',
   'December'
 ];
+const outputDir = './output';
+const inputDir = './output/year-pages';
 
 function checkForDate(str) {
   const split = str.split(' ');
-  const isMonth = months.includes(split[0]);
+  const isMonth = MONTHS.includes(split[0]);
   const isDate = !isNaN(split[1]);
   return isMonth && isDate;
 }
@@ -83,7 +84,7 @@ function extractPeople(file) {
   const html = fs.readFileSync(`${inputDir}/${file}`, 'utf-8');
   const $ = cheerio.load(html);
 
-  const peopleByMonth = months.map((month, monthIndex) => {
+  const peopleByMonth = MONTHS.map((month, monthIndex) => {
     const parent = $(`#${month}_2`).parent();
     const ul = parent.nextAll('ul').eq(0);
     const year = file.replace('.html', '');
@@ -107,8 +108,8 @@ function init() {
 
   const output = d3.csvFormat(flatPeople);
 
-  mkdirp('./output');
-  fs.writeFileSync('./output/all-deaths-2015-2018.csv', output);
+  mkdirp(outputDir);
+  fs.writeFileSync('./output/people--all-deaths.csv', output);
 }
 
 init();

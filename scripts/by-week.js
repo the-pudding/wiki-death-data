@@ -1,7 +1,6 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const d3 = require('d3');
-const getTimestamp = require('../helpers/get-timestamp');
 const outputDir = './output/people-by-week';
 
 const MIDWEEK_INDEX = 3;
@@ -11,21 +10,14 @@ const wikiPageviewData = d3.csvParse(
   fs.readFileSync('./output/wiki-pageviews.csv', 'utf-8')
 );
 
-function calculateTraffic({ views, timestamp }) {
-  // const match = wikiPageviewData.find(d => d.timestamp === timestamp);
-  // if (match) return views / match.views;
-  // console.error('no match', timestamp);
-  // return null;
-}
-
 function createWeekData(person) {
   const id = person.link.replace('/wiki/', '');
   const personPageviewData = d3.csvParse(
-    fs.readFileSync(`./output/people-joined/${id}.csv`, 'utf-8')
+    fs.readFileSync(`./output/people-pageviews/${id}.csv`, 'utf-8')
   );
 
   const deathIndex = personPageviewData.findIndex(
-    d => d.timestamp === `${person.timestamp_of_death}00`
+    d => d.timestamp === `${person.timestamp_of_death}`
   );
 
   const rem = deathIndex % DAYS_IN_WEEK;
@@ -46,12 +38,12 @@ function createWeekData(person) {
         timestamps.includes(w.timestamp)
       );
       const total = d3.sum(filteredWikiPageviews, d => +d.views);
-      const percent_traffic = views / total;
+      const share = views / total;
       const { week, timestamp, timestamp_index } = values[0];
       const count = values.length;
       return {
         views,
-        percent_traffic,
+        share,
         week,
         timestamp,
         timestamp_index,
@@ -69,7 +61,7 @@ function init() {
   mkdirp(outputDir);
 
   const data = d3.csvParse(
-    fs.readFileSync('./output/all-deaths-2015-2018.csv', 'utf-8')
+    fs.readFileSync('./output/people--all-deaths.csv', 'utf-8')
   );
 
   data.forEach((d, i) => {
