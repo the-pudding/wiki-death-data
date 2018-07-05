@@ -22,11 +22,11 @@ function getDiff(a, b) {
   return Math.abs(aDate - bDate) / MS_DAY;
 }
 
-function getPageviewsByWeek(person) {
+function getPageviewsByBin({ person, days }) {
   const id = getID(person.link);
   const { pageid } = person;
   const data = d3.csvParse(
-    fs.readFileSync(`./output/people-by-week/${id}.csv`, 'utf-8')
+    fs.readFileSync(`./output/people-bin-${days}/${id}.csv`, 'utf-8')
   );
 
   const withCalc = data.map((d, i) => ({
@@ -35,16 +35,13 @@ function getPageviewsByWeek(person) {
   }));
   withCalc.sort((a, b) => d3.ascending(a.diff, b.diff));
 
-  if (['/wiki/Carrie_Fisher', '/wiki/Chester_Bennington'].includes(person.link))
-    console.log(withCalc.slice(0, 4));
-
-  const weekOfDeathIndex = +withCalc[0].i;
+  const binOfDeathIndex = +withCalc[0].i;
 
   const output = data.map(
-    ({ week, timestamp, timestamp_index, views, share }, i) => ({
-      week,
+    ({ bin, timestamp, timestamp_index, views, share }, i) => ({
+      bin,
       timestamp_index,
-      week_death_index: i - weekOfDeathIndex,
+      bin_death_index: i - binOfDeathIndex,
       pageid,
       timestamp: timestamp.substring(0, 8),
       views,
@@ -96,10 +93,20 @@ function init() {
   fs.writeFileSync('./web-data/pageviews.csv', pageviewOutput);
 
   // by week pageviews
-  const byWeekPageviewData = [].concat(...peopleData.map(getPageviewsByWeek));
+  const bin7PageviewData = [].concat(
+    ...peopleData.map(person => getPageviewsByBin({ person, days: 7 }))
+  );
 
-  const byWeekPageviewOutput = d3.csvFormat(byWeekPageviewData);
-  fs.writeFileSync('./web-data/pageviews-by-week.csv', byWeekPageviewOutput);
+  const bin7PageviewOutput = d3.csvFormat(bin7PageviewData);
+  fs.writeFileSync('./web-data/pageviews-bin-7.csv', bin7PageviewOutput);
+
+  // by 48hrs pageviews
+  const bin2PageviewData = [].concat(
+    ...peopleData.map(person => getPageviewsByBin({ person, days: 2 }))
+  );
+
+  const bin2PageviewOutput = d3.csvFormat(bin2PageviewData);
+  fs.writeFileSync('./web-data/pageviews-bin-2.csv', bin2PageviewOutput);
 }
 
 init();

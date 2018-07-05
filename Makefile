@@ -15,7 +15,7 @@ reproduce:
 	parse-year-pages \
 	get-wiki-pageviews \
 	get-people-pageviews \
-	by-week \
+	bin \
 	stats \
 	filter-population \
 	add-details \

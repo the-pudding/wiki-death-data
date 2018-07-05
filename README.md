@@ -35,9 +35,9 @@ Use wiki pageviews api to get the daily pageviews for en.wikipedia.org so that w
 
 Use the wiki pageviews api to get the daily pageviews for each person in our full list of notable deaths.
 
-#### `npm run by-week`
+#### `npm run bin`
 
-Bin each person's pageviews by week.
+Bin each person's pageviews by week, 48 hrs.
 
 #### `npm run stats`
 
