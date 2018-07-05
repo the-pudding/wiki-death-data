@@ -1,4 +1,4 @@
-const METRIC = 'change_baseline_percent_traffic';
+const METRIC = 'change_before_share';
 const $main = d3.select('main');
 
 const margin = { top: 10, right: 30, bottom: 30, left: 60 };
@@ -108,8 +108,8 @@ function loadPeopleData() {
     d3.csv('data/people.csv', d => ({
       ...d,
       max_views: +d.max_views,
-      max_percent_traffic: +d.max_percent_traffic,
-      max_change_baseline_percent_traffic: +d.max_change_baseline_percent_traffic,
+      max_share: +d.max_share,
+      max_change_before_share: +d.max_change_before_share,
       thumbnail_width: +d.thumbnail_width,
       thumbnail_height: +d.thumbnail_height,
       year_of_birth: +d.year_of_birth,
@@ -126,8 +126,8 @@ function loadPageviewsData() {
       ...d,
       date: convertTimestampToDate(d.timestamp),
       views: +d.views,
-      percent_traffic: +d.percent_traffic,
-      change_baseline_percent_traffic: +d.change_baseline_percent_traffic
+      share: +d.share,
+      change_before_share: +d.change_before_share
     }))
       .then(resolve)
       .catch(reject);
