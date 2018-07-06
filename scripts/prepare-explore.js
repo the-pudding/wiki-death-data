@@ -1,7 +1,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const d3 = require('d3');
-const outputDir = './web-data';
+const outputDir = './explore-data';
 const MS_DAY = 86400000;
 
 function getID(str) {
@@ -84,13 +84,13 @@ function init() {
   );
 
   const peopleOutput = d3.csvFormat(peopleData);
-  fs.writeFileSync('./web-data/people.csv', peopleOutput);
+  fs.writeFileSync('./explore-data/people.csv', peopleOutput);
 
   // pageviews
   const pageviewData = [].concat(...peopleData.map(getPageviews));
 
   const pageviewOutput = d3.csvFormat(pageviewData);
-  fs.writeFileSync('./web-data/pageviews.csv', pageviewOutput);
+  fs.writeFileSync('./explore-data/pageviews.csv', pageviewOutput);
 
   // by week pageviews
   const bin7PageviewData = [].concat(
@@ -98,7 +98,7 @@ function init() {
   );
 
   const bin7PageviewOutput = d3.csvFormat(bin7PageviewData);
-  fs.writeFileSync('./web-data/pageviews-bin-7.csv', bin7PageviewOutput);
+  fs.writeFileSync('./explore-data/pageviews-bin-7.csv', bin7PageviewOutput);
 
   // by 48hrs pageviews
   const bin2PageviewData = [].concat(
@@ -106,7 +106,7 @@ function init() {
   );
 
   const bin2PageviewOutput = d3.csvFormat(bin2PageviewData);
-  fs.writeFileSync('./web-data/pageviews-bin-2.csv', bin2PageviewOutput);
+  fs.writeFileSync('./explore-data/pageviews-bin-2.csv', bin2PageviewOutput);
 }
 
 init();

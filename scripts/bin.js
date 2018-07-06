@@ -18,7 +18,8 @@ function createBinData({ person, days }) {
   );
 
   const rem = deathIndex % days;
-  const offset = Math.floor(days / 2) - rem;
+  const mid = days === 2 ? 0 : Math.floor(days / 2);
+  const offset = mid - rem;
 
   const withBin = personPageviewData.map(d => ({
     ...d,

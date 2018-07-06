@@ -1,6 +1,6 @@
 import percent from './script-percent';
 import change from './script-change';
-// import ad from './script-ad';
+import ad from './script-ad';
 import bin from './script-bin';
 
 // percent();

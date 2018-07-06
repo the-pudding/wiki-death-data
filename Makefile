@@ -5,7 +5,7 @@ clean-dir:
 	mkdir output
 
 copy-data:
-	cp web-data/*.csv exploration/data/
+	cp explore-data/*.csv exploration/data/
 
 reproduce:
 	make clean-dir
@@ -19,6 +19,6 @@ reproduce:
 	stats \
 	filter-population \
 	add-details \
-	prepare-web
+	prepare-explore
 
 	make copy-data

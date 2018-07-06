@@ -51,6 +51,6 @@ Reduces the data to people who satisfy some quantiative criteria
 
 Gets more detail info on each person
 
-#### `npm run prepare-web`
+#### `npm run prepare-explore`
 
-Consolidates and optimizes data for web presentation
+Consolidates and optimizes data for explore presentation
