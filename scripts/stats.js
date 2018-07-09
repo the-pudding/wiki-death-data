@@ -46,7 +46,7 @@ function calculate(person) {
     d3.csvParse(fs.readFileSync(`./output/people-bin-2/${id}.csv`, 'utf-8'))
   );
 
-  const bin7Data = clean(
+  const bin3Data = clean(
     d3.csvParse(fs.readFileSync(`./output/people-bin-7/${id}.csv`, 'utf-8'))
   );
 
@@ -92,6 +92,28 @@ function calculate(person) {
   const max_change_before_share_bin2 =
     max_share_bin2 / medianShareObj_bin2.medianBefore;
 
+  // bin 3
+  const median_views_bin3 = d3.median(bin3Data, d => d.views);
+  const median_share_bin3 = d3.median(bin3Data, d => d.share);
+  const max_views_bin3 = d3.max(bin3Data, d => d.views);
+  const max_share_bin3 = d3.max(bin3Data, d => d.share);
+  const medianViewsObj_bin3 = getMedianSides({
+    person,
+    data: bin3Data,
+    metric: 'views'
+  });
+  const medianShareObj_bin3 = getMedianSides({
+    person,
+    data: bin3Data,
+    metric: 'share'
+  });
+
+  const max_change_before_views_bin3 =
+    max_views_bin3 / medianViewsObj_bin3.medianBefore;
+
+  const max_change_before_share_bin3 =
+    max_share_bin3 / medianShareObj_bin3.medianBefore;
+
   return {
     ...person,
     median_views,
@@ -113,7 +135,17 @@ function calculate(person) {
     max_views_bin2,
     max_share_bin2,
     max_change_before_views_bin2,
-    max_change_before_share_bin2
+    max_change_before_share_bin2,
+    median_views_bin3,
+    median_views_before_bin3: medianViewsObj_bin3.medianBefore,
+    median_views_after_bin3: medianViewsObj_bin3.medianAfter,
+    median_share_bin3,
+    median_share_before_bin3: medianShareObj_bin3.medianBefore,
+    median_share_after_bin3: medianShareObj_bin3.medianAfter,
+    max_views_bin3,
+    max_share_bin3,
+    max_change_before_views_bin3,
+    max_change_before_share_bin3
   };
 }
 

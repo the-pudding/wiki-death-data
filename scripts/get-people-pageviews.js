@@ -10,6 +10,7 @@ const wikiPageviewData = d3.csvParse(
   fs.readFileSync('./output/wiki-pageviews.csv', 'utf-8')
 );
 
+const medianWikiPageviews = d3.median(wikiPageviewData.map(d => +d.views));
 let timestampIndex = null;
 
 function createDateIndex() {
@@ -21,7 +22,7 @@ function createDateIndex() {
 
 function calculateShare({ views, timestamp }) {
   const match = wikiPageviewData.find(d => d.timestamp === timestamp);
-  if (match) return views / match.views;
+  if (match) return views / +match.views;
   console.error('no match', timestamp);
   return null;
 }
@@ -31,6 +32,7 @@ function createFiller(t, i) {
     timestamp: t,
     timestamp_index: i,
     views: null,
+    views_adjusted: null,
     share: null
   };
 }
@@ -43,11 +45,17 @@ function clean(data) {
 }
 
 function addInfo(data) {
-  const withInfo = data.map(d => ({
-    ...d,
-    timestamp_index: timestampIndex.findIndex(t => t === d.timestamp),
-    share: calculateShare(d)
-  }));
+  const withInfo = data.map(d => {
+    const timestamp_index = timestampIndex.findIndex(t => t === d.timestamp);
+    const share = calculateShare(d);
+    const views_adjusted = Math.floor(share * medianWikiPageviews);
+    return {
+      ...d,
+      timestamp_index,
+      share,
+      views_adjusted
+    };
+  });
 
   const withFiller = timestampIndex.map((t, i) => {
     const match = withInfo.find(m => m.timestamp === t);

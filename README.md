@@ -37,20 +37,24 @@ Use the wiki pageviews api to get the daily pageviews for each person in our ful
 
 #### `npm run bin`
 
-Bin each person's pageviews by week, 48 hrs.
+Bin each person's pageviews by multiple intervals (1 week, 72hrs, 48 hrs).
 
 #### `npm run stats`
 
-Calculates a bunch of summary statistics for each person
+Calculates a bunch of summary statistics for each person.
 
 #### `npm run filter-population`
 
-Reduces the data to people who satisfy some quantiative criteria
+Reduces the data to people who satisfy some quantiative criteria.
 
 #### `npm run add-details`
 
-Gets more detail info on each person
+Gets more detail info on each person from wiki.
 
 #### `npm run prepare-explore`
 
-Consolidates and optimizes data for explore presentation
+Consolidates and optimizes data for visual exploration.
+
+#### `npm run prepare-web`
+
+Streamlines data for web presentation.

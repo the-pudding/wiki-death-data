@@ -38,13 +38,14 @@ function getPageviewsByBin({ person, days }) {
   const binOfDeathIndex = +withCalc[0].i;
 
   const output = data.map(
-    ({ bin, timestamp, timestamp_index, views, share }, i) => ({
+    ({ bin, timestamp, timestamp_index, views, views_adjusted, share }, i) => ({
       bin,
       timestamp_index,
       bin_death_index: i - binOfDeathIndex,
       pageid,
       timestamp: timestamp.substring(0, 8),
       views,
+      views_adjusted,
       share: (+share).toFixed(8)
     })
   );
@@ -62,15 +63,18 @@ function getPageviews(person) {
     d => d.timestamp === `${person.timestamp_of_death}`
   );
 
-  const output = data.map(({ timestamp, timestamp_index, views, share }) => ({
-    timestamp_index,
-    death_index: timestamp_index - deathIndex,
-    pageid,
-    timestamp: timestamp.substring(0, 8),
-    views,
-    share: (+share).toFixed(8),
-    change_before_share: +share / median_share_before
-  }));
+  const output = data.map(
+    ({ timestamp, timestamp_index, views, views_adjusted, share }) => ({
+      timestamp_index,
+      death_index: timestamp_index - deathIndex,
+      pageid,
+      timestamp: timestamp.substring(0, 8),
+      views,
+      views_adjusted,
+      share: (+share).toFixed(8),
+      change_before_share: +share / median_share_before
+    })
+  );
 
   return output;
 }
@@ -107,6 +111,14 @@ function init() {
 
   const bin2PageviewOutput = d3.csvFormat(bin2PageviewData);
   fs.writeFileSync('./explore-data/pageviews-bin-2.csv', bin2PageviewOutput);
+
+  // by 72hrs pageviews
+  const bin3PageviewData = [].concat(
+    ...peopleData.map(person => getPageviewsByBin({ person, days: 3 }))
+  );
+
+  const bin3PageviewOutput = d3.csvFormat(bin3PageviewData);
+  fs.writeFileSync('./explore-data/pageviews-bin-3.csv', bin3PageviewOutput);
 }
 
 init();

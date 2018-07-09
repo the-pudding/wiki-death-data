@@ -18,7 +18,8 @@ function createBinData({ person, days }) {
   );
 
   const rem = deathIndex % days;
-  const mid = days === 2 ? 0 : Math.floor(days / 2);
+  // const mid = days === 2 ? 0 : Math.floor(days / 2);
+  const mid = 0;
   const offset = mid - rem;
 
   const withBin = personPageviewData.map(d => ({
@@ -31,6 +32,7 @@ function createBinData({ person, days }) {
     .key(d => d.bin)
     .rollup(values => {
       const views = d3.sum(values, v => +v.views);
+      const views_adjusted = d3.sum(values, v => +v.views_adjusted);
       const timestamps = values.map(v => v.timestamp);
       const filteredWikiPageviews = wikiPageviewData.filter(w =>
         timestamps.includes(w.timestamp)
@@ -41,6 +43,7 @@ function createBinData({ person, days }) {
       const count = values.length;
       return {
         views,
+        views_adjusted,
         share,
         bin,
         timestamp,
@@ -57,6 +60,7 @@ function createBinData({ person, days }) {
 
 function init() {
   mkdirp(`${outputDir}-7`);
+  mkdirp(`${outputDir}-3`);
   mkdirp(`${outputDir}-2`);
 
   const data = d3.csvParse(
@@ -66,6 +70,7 @@ function init() {
   data.forEach((person, i) => {
     console.log(`${i} of ${data.length}`);
     createBinData({ person, days: 7 });
+    createBinData({ person, days: 3 });
     createBinData({ person, days: 2 });
   });
 }
