@@ -106,6 +106,16 @@ function init() {
   const peopleByYear = files.map(extractPeople);
   const flatPeople = [].concat(...peopleByYear);
 
+  // add beyonce
+  flatPeople.push({
+    link: '/wiki/Beyoncé',
+    name: 'Beyoncé',
+    year_of_birth: 1981,
+    year_of_death: 2100,
+    date_of_death: 'January 1',
+    timestamp_of_death: '21000101'
+  });
+
   const output = d3.csvFormat(flatPeople);
 
   mkdirp(outputDir);
