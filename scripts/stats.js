@@ -43,8 +43,8 @@ function calculate(person) {
   const id = person.link.replace('/wiki/', '');
   const file =
     BIN > 1
-      ? `./output/people-pageviews/${id}.csv`
-      : `./output/people-bin-${BIN}/${id}.csv`;
+      ? `./output/people-bin-${BIN}/${id}.csv`
+      : `./output/people-pageviews/${id}.csv`;
 
   const data = clean(d3.csvParse(fs.readFileSync(file, 'utf-8')));
 
