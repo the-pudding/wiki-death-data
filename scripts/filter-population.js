@@ -21,12 +21,12 @@ function init() {
     d3.csvParse(fs.readFileSync('./output/people--stats.csv', 'utf-8'))
   );
 
-  // filter by share (must have hit 0.1% of total wiki traffic)
-  // filter by share (must have median before of at least 0.0001%)
+  // filter by adjusted pageviews (must have hit 500k at bin 2)
+  // filter by adjusted pageviews (must have median before death of at least 100)
   // filter by date (must be at least 30 days from edges)
   const filtered = data
-    .filter(d => d.max_share_bin2 >= 0.001)
-    .filter(d => d.median_share_before_bin2 >= 0.000001)
+    .filter(d => d.max_views_adjusted >= 500000)
+    .filter(d => d.median_views_adjusted_before >= 100)
     .filter(d => {
       const dateStart = new Date(START.year, START.month, 1);
       const dateEnd = new Date();

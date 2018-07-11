@@ -41,7 +41,7 @@ Bin each person's pageviews by multiple intervals (1 week, 72hrs, 48 hrs).
 
 #### `npm run stats`
 
-Calculates a bunch of summary statistics for each person.
+Calculates a bunch of summary statistics for each person (Must choose bin).
 
 #### `npm run filter-population`
 

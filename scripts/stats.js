@@ -3,10 +3,13 @@ const mkdirp = require('mkdirp');
 const d3 = require('d3');
 const outputDir = './output';
 
+const BIN = 2;
+
 function clean(data) {
   return data.map(d => ({
     ...d,
     views: d.views.length ? +d.views : null,
+    views_adjusted: d.views_adjusted.length ? +d.views_adjusted : null,
     share: d.share.length ? +d.share : null
   }));
 }
@@ -38,114 +41,69 @@ function getMedianSides({ person, data, metric }) {
 
 function calculate(person) {
   const id = person.link.replace('/wiki/', '');
-  const dailyData = clean(
-    d3.csvParse(fs.readFileSync(`./output/people-pageviews/${id}.csv`, 'utf-8'))
-  );
+  const file =
+    BIN > 1
+      ? `./output/people-pageviews/${id}.csv`
+      : `./output/people-bin-${BIN}/${id}.csv`;
 
-  const bin2Data = clean(
-    d3.csvParse(fs.readFileSync(`./output/people-bin-2/${id}.csv`, 'utf-8'))
-  );
+  const data = clean(d3.csvParse(fs.readFileSync(file, 'utf-8')));
 
-  const bin3Data = clean(
-    d3.csvParse(fs.readFileSync(`./output/people-bin-7/${id}.csv`, 'utf-8'))
+  const median_views = Math.floor(d3.median(data, d => d.views));
+  const median_views_adjusted = Math.floor(
+    d3.median(data, d => d.views_adjusted)
   );
+  const median_share = Math.floor(d3.median(data, d => d.share));
 
-  // daily
-  const median_views = d3.median(dailyData, d => d.views);
-  const median_share = d3.median(dailyData, d => d.share);
-  const max_views = d3.max(dailyData, d => d.views);
-  const max_share = d3.max(dailyData, d => d.share);
+  const max_views = d3.max(data, d => d.views);
+  const max_views_adjusted = d3.max(data, d => d.views_adjusted);
+  const max_share = d3.max(data, d => d.share);
+
   const medianViewsObj = getMedianSides({
     person,
-    data: dailyData,
+    data,
     metric: 'views'
+  });
+  const medianViewsAdjustedObj = getMedianSides({
+    person,
+    data,
+    metric: 'views_adjusted'
   });
   const medianShareObj = getMedianSides({
     person,
-    data: dailyData,
+    data,
     metric: 'share'
   });
 
-  const max_change_before_views = max_views / medianViewsObj.medianBefore;
-
-  const max_change_before_share = max_share / medianShareObj.medianBefore;
-
-  // bin 2
-  const median_views_bin2 = d3.median(bin2Data, d => d.views);
-  const median_share_bin2 = d3.median(bin2Data, d => d.share);
-  const max_views_bin2 = d3.max(bin2Data, d => d.views);
-  const max_share_bin2 = d3.max(bin2Data, d => d.share);
-  const medianViewsObj_bin2 = getMedianSides({
-    person,
-    data: bin2Data,
-    metric: 'views'
-  });
-  const medianShareObj_bin2 = getMedianSides({
-    person,
-    data: bin2Data,
-    metric: 'share'
-  });
-
-  const max_change_before_views_bin2 =
-    max_views_bin2 / medianViewsObj_bin2.medianBefore;
-
-  const max_change_before_share_bin2 =
-    max_share_bin2 / medianShareObj_bin2.medianBefore;
-
-  // bin 3
-  const median_views_bin3 = d3.median(bin3Data, d => d.views);
-  const median_share_bin3 = d3.median(bin3Data, d => d.share);
-  const max_views_bin3 = d3.max(bin3Data, d => d.views);
-  const max_share_bin3 = d3.max(bin3Data, d => d.share);
-  const medianViewsObj_bin3 = getMedianSides({
-    person,
-    data: bin3Data,
-    metric: 'views'
-  });
-  const medianShareObj_bin3 = getMedianSides({
-    person,
-    data: bin3Data,
-    metric: 'share'
-  });
-
-  const max_change_before_views_bin3 =
-    max_views_bin3 / medianViewsObj_bin3.medianBefore;
-
-  const max_change_before_share_bin3 =
-    max_share_bin3 / medianShareObj_bin3.medianBefore;
+  const max_change_before_views = Math.floor(
+    max_views / medianViewsObj.medianBefore
+  );
+  const max_change_before_views_adjusted = Math.floor(
+    max_views_adjusted / medianViewsAdjustedObj.medianBefore
+  );
+  const max_change_before_share = Math.floor(
+    max_share / medianShareObj.medianBefore
+  );
 
   return {
     ...person,
+    bin: BIN,
     median_views,
-    median_views_before: medianViewsObj.medianBefore,
-    median_views_after: medianViewsObj.medianAfter,
+    median_views_before: Math.floor(medianViewsObj.medianBefore),
+    median_views_after: Math.floor(medianViewsObj.medianAfter),
+    median_views_adjusted,
+    median_views_adjusted_before: Math.floor(
+      medianViewsAdjustedObj.medianBefore
+    ),
+    median_views_adjusted_after: Math.floor(medianViewsAdjustedObj.medianAfter),
     median_share,
-    median_share_before: medianShareObj.medianBefore,
-    median_share_after: medianShareObj.medianAfter,
+    median_share_before: Math.floor(medianShareObj.medianBefore),
+    median_share_after: Math.floor(medianShareObj.medianAfter),
+    max_views_adjusted,
     max_views,
     max_share,
     max_change_before_views,
-    max_change_before_share,
-    median_views_bin2,
-    median_views_before_bin2: medianViewsObj_bin2.medianBefore,
-    median_views_after_bin2: medianViewsObj_bin2.medianAfter,
-    median_share_bin2,
-    median_share_before_bin2: medianShareObj_bin2.medianBefore,
-    median_share_after_bin2: medianShareObj_bin2.medianAfter,
-    max_views_bin2,
-    max_share_bin2,
-    max_change_before_views_bin2,
-    max_change_before_share_bin2,
-    median_views_bin3,
-    median_views_before_bin3: medianViewsObj_bin3.medianBefore,
-    median_views_after_bin3: medianViewsObj_bin3.medianAfter,
-    median_share_bin3,
-    median_share_before_bin3: medianShareObj_bin3.medianBefore,
-    median_share_after_bin3: medianShareObj_bin3.medianAfter,
-    max_views_bin3,
-    max_share_bin3,
-    max_change_before_views_bin3,
-    max_change_before_share_bin3
+    max_change_before_views_adjusted,
+    max_change_before_share
   };
 }
 
