@@ -1,6 +1,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const d3 = require('d3');
+const ss = require('simple-statistics');
 const outputDir = './output';
 
 const BIN = 2;
@@ -21,22 +22,38 @@ function convertTimestampToDate(timestamp) {
   return new Date(year, month, date);
 }
 
+function getSide({ data, before, deathDate }) {
+  return data.filter(d => {
+    const date = convertTimestampToDate(d.timestamp);
+    return before ? date < deathDate : date > deathDate;
+  });
+}
+
 function getMedianSides({ person, data, metric }) {
   const { year_of_death, date_of_death } = person;
   const deathDate = new Date(`${date_of_death} ${year_of_death}`);
 
-  const before = data.filter(d => {
-    const date = convertTimestampToDate(d.timestamp);
-    return date < deathDate;
-  });
+  const before = getSide({ data, deathDate, before: true });
+  const after = getSide({ data, deathDate, before: false });
 
-  const after = data.filter(d => {
-    const date = convertTimestampToDate(d.timestamp);
-    return date > deathDate;
-  });
   const medianBefore = d3.median(before, d => d[metric]);
   const medianAfter = d3.median(after, d => d[metric]);
   return { medianBefore, medianAfter };
+}
+
+function getDistribution({ person, data }) {
+  const { year_of_death, date_of_death } = person;
+  const deathDate = new Date(`${date_of_death} ${year_of_death}`);
+
+  const before = getSide({ data, deathDate, before: true });
+  const vals = before.map(d => d.views_adjusted);
+  if (before.length) {
+    const std = ss.standardDeviation(vals);
+    const iqr = ss.interquartileRange(vals);
+    return { std, iqr };
+  }
+
+  return {};
 }
 
 function calculate(person) {
@@ -84,6 +101,9 @@ function calculate(person) {
     max_share / medianShareObj.medianBefore
   );
 
+  const withViews = data.filter(d => d.views_adjusted);
+  const { std, iqr } = getDistribution({ person, data: withViews });
+
   return {
     ...person,
     bin: BIN,
@@ -103,7 +123,9 @@ function calculate(person) {
     max_share,
     max_change_before_views,
     max_change_before_views_adjusted,
-    max_change_before_share
+    max_change_before_share,
+    std,
+    iqr
   };
 }
 
