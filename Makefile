@@ -5,7 +5,7 @@ clean-dir:
 	mkdir output
 
 copy-data:
-	# cp explore-data/*.csv exploration/data/
+	cp explore-data/*.csv exploration/data/
 	cp explore-data/*.csv /Users/russell/Pudding/projects/wiki-death/src/assets/data
 
 reproduce:

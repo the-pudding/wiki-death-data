@@ -36,8 +36,10 @@ function getAverageSides({ person, data, metric, mode }) {
   const before = getSide({ data, deathDate, before: true });
   const after = getSide({ data, deathDate, before: false });
 
-  const mBefore = d3[mode](before, d => d[metric]);
-  const mAfter = d3[mode](after, d => d[metric]);
+  const vBefore = before.map(d => d[metric]);
+  const vAfter = after.map(d => d[metric]);
+  const mBefore = mode === 'median' ? d3.median(vBefore) : d3.mean(vBefore);
+  const mAfter = mode === 'median' ? d3.median(vAfter) : d3.mean(vAfter);
   return { mBefore, mAfter };
 }
 
@@ -147,6 +149,7 @@ function init() {
 
   const withAverages = data.map(calculate);
   const output = d3.csvFormat(withAverages);
+
   fs.writeFileSync('./output/people--stats.csv', output);
 }
 
