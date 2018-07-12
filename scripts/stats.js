@@ -29,16 +29,16 @@ function getSide({ data, before, deathDate }) {
   });
 }
 
-function getMedianSides({ person, data, metric }) {
+function getAverageSides({ person, data, metric, mode }) {
   const { year_of_death, date_of_death } = person;
   const deathDate = new Date(`${date_of_death} ${year_of_death}`);
 
   const before = getSide({ data, deathDate, before: true });
   const after = getSide({ data, deathDate, before: false });
 
-  const medianBefore = d3.median(before, d => d[metric]);
-  const medianAfter = d3.median(after, d => d[metric]);
-  return { medianBefore, medianAfter };
+  const mBefore = d3[mode](before, d => d[metric]);
+  const mAfter = d3[mode](after, d => d[metric]);
+  return { mBefore, mAfter };
 }
 
 function getDistribution({ person, data }) {
@@ -75,30 +75,40 @@ function calculate(person) {
   const max_views_adjusted = d3.max(data, d => d.views_adjusted);
   const max_share = d3.max(data, d => d.share);
 
-  const medianViewsObj = getMedianSides({
+  const medianViewsObj = getAverageSides({
     person,
     data,
-    metric: 'views'
+    metric: 'views',
+    mode: 'median'
   });
-  const medianViewsAdjustedObj = getMedianSides({
+  const medianViewsAdjustedObj = getAverageSides({
     person,
     data,
-    metric: 'views_adjusted'
+    metric: 'views_adjusted',
+    mode: 'median'
   });
-  const medianShareObj = getMedianSides({
+  const medianShareObj = getAverageSides({
     person,
     data,
-    metric: 'share'
+    metric: 'share',
+    mode: 'median'
+  });
+
+  const meanViewsAdjustedObj = getAverageSides({
+    person,
+    data,
+    metric: 'views_adjusted',
+    mode: 'mean'
   });
 
   const max_change_before_views = Math.floor(
-    max_views / medianViewsObj.medianBefore
+    max_views / medianViewsObj.mBefore
   );
   const max_change_before_views_adjusted = Math.floor(
-    max_views_adjusted / medianViewsAdjustedObj.medianBefore
+    max_views_adjusted / medianViewsAdjustedObj.mBefore
   );
   const max_change_before_share = Math.floor(
-    max_share / medianShareObj.medianBefore
+    max_share / medianShareObj.mBefore
   );
 
   const withViews = data.filter(d => d.views_adjusted);
@@ -108,22 +118,21 @@ function calculate(person) {
     ...person,
     bin: BIN,
     median_views,
-    median_views_before: Math.floor(medianViewsObj.medianBefore),
-    median_views_after: Math.floor(medianViewsObj.medianAfter),
+    median_views_before: Math.floor(medianViewsObj.mBefore),
+    median_views_after: Math.floor(medianViewsObj.mAfter),
     median_views_adjusted,
-    median_views_adjusted_before: Math.floor(
-      medianViewsAdjustedObj.medianBefore
-    ),
-    median_views_adjusted_after: Math.floor(medianViewsAdjustedObj.medianAfter),
+    median_views_adjusted_before: Math.floor(medianViewsAdjustedObj.mBefore),
+    median_views_adjusted_after: Math.floor(medianViewsAdjustedObj.mAfter),
     median_share,
-    median_share_before: Math.floor(medianShareObj.medianBefore),
-    median_share_after: Math.floor(medianShareObj.medianAfter),
+    median_share_before: Math.floor(medianShareObj.mBefore),
+    median_share_after: Math.floor(medianShareObj.mAfter),
     max_views_adjusted,
     max_views,
     max_share,
     max_change_before_views,
     max_change_before_views_adjusted,
     max_change_before_share,
+    mean_views_adjusted_before: Math.floor(meanViewsAdjustedObj.mBefore),
     std,
     iqr
   };
