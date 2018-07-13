@@ -1,8 +1,11 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const d3 = require('d3');
+const movingAverages = require('moving-averages');
 const outputDir = './web-data';
 const MS_DAY = 86400000;
+const INF = 99999;
+const MA_PERIOD = 7;
 
 function getID(str) {
   return str.replace('/wiki/', '');
@@ -55,14 +58,14 @@ function init() {
   // start looking at 48hrs after
   const careData = [].concat(
     ...peopleData.map(person => {
-      const after = getPageviewsByBin({ person, bin: 1, start: 2, end: 9999 });
+      const after = getPageviewsByBin({ person, bin: 1, start: 2, end: INF });
 
       const match = after.find(
         d =>
           +d.views_adjusted <
           +person.mean_views_adjusted_bd_1 + +person.std_1 * 2
       );
-      const cross = match ? +match.bin_death_index : 9999;
+      const cross = match ? +match.bin_death_index : INF;
       const filtered = after.filter(d => +d.bin_death_index <= cross);
       return filtered;
     })
@@ -70,6 +73,51 @@ function init() {
 
   const careOutput = d3.csvFormat(careData);
   fs.writeFileSync('./web-data/care.csv', careOutput);
+
+  // before/after moving average (impact chart)
+  const impactData = []
+    .concat(
+      ...peopleData.map(person => {
+        const before = getPageviewsByBin({
+          person,
+          bin: 1,
+          start: -INF,
+          end: -1
+        });
+        const after = getPageviewsByBin({ person, bin: 1, start: 2, end: INF });
+
+        const beforeN = before.map(d => +d.views_adjusted);
+        const afterN = after.map(d => +d.views_adjusted);
+        const mab = movingAverages.ma(beforeN, MA_PERIOD);
+        const maa = movingAverages.ma(afterN, MA_PERIOD);
+
+        const beforeWithM = before.map((d, i) => ({
+          ...d,
+          ma: mab[i],
+          before: true
+        }));
+
+        const afterWithM = after.map((d, i) => ({
+          ...d,
+          ma: maa[i],
+          before: false
+        }));
+
+        const joined = beforeWithM.concat(afterWithM);
+
+        return joined;
+      })
+    )
+    .filter(d => Math.abs(d.bin_death_index) < 100)
+    .map(d => ({
+      pageid: d.pageid,
+      bin_death_index: d.bin_death_index,
+      ma: d.ma ? Math.floor(d.ma) : null,
+      before: d.before ? 1 : null
+    }));
+
+  const impactOutput = d3.csvFormat(impactData);
+  fs.writeFileSync('./web-data/impact.csv', impactOutput);
 }
 
 init();
