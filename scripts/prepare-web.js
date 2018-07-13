@@ -50,6 +50,26 @@ function init() {
 
   const perspectiveOutput = d3.csvFormat(perspectiveData);
   fs.writeFileSync('./web-data/perspective.csv', perspectiveOutput);
+
+  // daily pageviews until < 2 std (eventually bin by week) (care chart)
+  // start looking at 48hrs after
+  const careData = [].concat(
+    ...peopleData.map(person => {
+      const after = getPageviewsByBin({ person, bin: 1, start: 2, end: 9999 });
+
+      const match = after.find(
+        d =>
+          +d.views_adjusted <
+          +person.mean_views_adjusted_bd_1 + +person.std_1 * 2
+      );
+      const cross = match ? +match.bin_death_index : 9999;
+      const filtered = after.filter(d => +d.bin_death_index <= cross);
+      return filtered;
+    })
+  );
+
+  const careOutput = d3.csvFormat(careData);
+  fs.writeFileSync('./web-data/care.csv', careOutput);
 }
 
 init();
