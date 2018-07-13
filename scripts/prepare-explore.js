@@ -22,26 +22,30 @@ function getDiff(a, b) {
   return Math.abs(aDate - bDate) / MS_DAY;
 }
 
+function getDeathIndex(data, timestamp_of_death) {
+  const withDiff = data.map((d, i) => ({
+    diff: getDiff(d.timestamp, timestamp_of_death),
+    i
+  }));
+  withDiff.sort((a, b) => d3.ascending(a.diff, b.diff));
+
+  return withDiff.shift().i;
+}
+
 function getPageviewsByBin({ person, days }) {
   const id = getID(person.link);
-  const { pageid } = person;
+  const { pageid, timestamp_of_death } = person;
   const data = d3.csvParse(
     fs.readFileSync(`./output/people-bin-${days}/${id}.csv`, 'utf-8')
   );
 
-  const withCalc = data.map((d, i) => ({
-    diff: getDiff(d.timestamp, person.timestamp_of_death),
-    i
-  }));
-  withCalc.sort((a, b) => d3.ascending(a.diff, b.diff));
-
-  const binOfDeathIndex = +withCalc[0].i;
+  const deathIndex = getDeathIndex(data, timestamp_of_death);
 
   const output = data.map(
     ({ bin, timestamp, timestamp_index, views, views_adjusted, share }, i) => ({
       bin,
       timestamp_index,
-      bin_death_index: i - binOfDeathIndex,
+      bin_death_index: i - deathIndex,
       pageid,
       timestamp: timestamp.substring(0, 8),
       views,

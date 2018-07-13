@@ -12,7 +12,8 @@
     "stats": "node scripts/stats.js",
     "filter-population": "node scripts/filter-population.js",
     "add-details": "node scripts/add-details.js",
-    "prepare-explore": "node scripts/prepare-explore.js"
+    "prepare-explore": "node scripts/prepare-explore.js",
+    "prepare-web": "node scripts/prepare-web.js"
   },
   "keywords": [],
   "author": "",

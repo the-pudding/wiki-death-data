@@ -5,8 +5,8 @@ clean-dir:
 	mkdir output
 
 copy-data:
-	cp explore-data/*.csv exploration/data/
-	cp explore-data/*.csv /Users/russell/Pudding/projects/wiki-death/src/assets/data
+	# cp explore-data/*.csv exploration/data/
+	cp web-data/*.csv /Users/russell/Pudding/projects/wiki-death/src/assets/data
 
 reproduce:
 	make clean-dir
@@ -20,6 +20,7 @@ reproduce:
 	stats \
 	filter-population \
 	add-details \
-	prepare-explore
+	prepare-web
+	# prepare-explore
 
 	make copy-data

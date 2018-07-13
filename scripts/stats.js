@@ -11,7 +11,8 @@ function clean(data) {
     ...d,
     views: d.views.length ? +d.views : null,
     views_adjusted: d.views_adjusted.length ? +d.views_adjusted : null,
-    share: d.share.length ? +d.share : null
+    share: d.share.length ? +d.share : null,
+    bin_death_index: +d.bin_death_index
   }));
 }
 
@@ -58,43 +59,39 @@ function getDistribution({ person, data }) {
   return {};
 }
 
-function calculate(person) {
-  const id = person.link.replace('/wiki/', '');
-  const file =
-    BIN > 1
-      ? `./output/people-bin-${BIN}/${id}.csv`
-      : `./output/people-pageviews/${id}.csv`;
+function addInfo({ data, bin, person }) {
+  // const median_views = Math.floor(d3.median(data, d => d.views));
+  // const median_views_adjusted = Math.floor(
+  //   d3.median(data, d => d.views_adjusted)
+  // );
+  // const median_share = Math.floor(d3.median(data, d => d.share));
 
-  const data = clean(d3.csvParse(fs.readFileSync(file, 'utf-8')));
+  // const max_views = d3.max(data, d => d.views);
+  // const max_views_adjusted = d3.max(data, d => d.views_adjusted);
+  // const max_share = d3.max(data, d => d.share);
+  const di = data.find(d => d.bin_death_index === 0);
+  const death_views = di.views;
+  const death_views_adjusted = di.views_adjusted;
+  // const death_share = data[deathIndex].share;
 
-  const median_views = Math.floor(d3.median(data, d => d.views));
-  const median_views_adjusted = Math.floor(
-    d3.median(data, d => d.views_adjusted)
-  );
-  const median_share = Math.floor(d3.median(data, d => d.share));
-
-  const max_views = d3.max(data, d => d.views);
-  const max_views_adjusted = d3.max(data, d => d.views_adjusted);
-  const max_share = d3.max(data, d => d.share);
-
-  const medianViewsObj = getAverageSides({
-    person,
-    data,
-    metric: 'views',
-    mode: 'median'
-  });
+  // const medianViewsObj = getAverageSides({
+  //   person,
+  //   data,
+  //   metric: 'views',
+  //   mode: 'median'
+  // });
   const medianViewsAdjustedObj = getAverageSides({
     person,
     data,
     metric: 'views_adjusted',
     mode: 'median'
   });
-  const medianShareObj = getAverageSides({
-    person,
-    data,
-    metric: 'share',
-    mode: 'median'
-  });
+  // const medianShareObj = getAverageSides({
+  //   person,
+  //   data,
+  //   metric: 'share',
+  //   mode: 'median'
+  // });
 
   const meanViewsAdjustedObj = getAverageSides({
     person,
@@ -103,41 +100,43 @@ function calculate(person) {
     mode: 'mean'
   });
 
-  const max_change_before_views = Math.floor(
-    max_views / medianViewsObj.mBefore
-  );
-  const max_change_before_views_adjusted = Math.floor(
-    max_views_adjusted / medianViewsAdjustedObj.mBefore
-  );
-  const max_change_before_share = Math.floor(
-    max_share / medianShareObj.mBefore
-  );
-
   const withViews = data.filter(d => d.views_adjusted);
   const { std, iqr } = getDistribution({ person, data: withViews });
 
+  const output = {};
+  output[`median_views_adjusted_bd_${bin}`] = medianViewsAdjustedObj.mBefore;
+  output[`median_views_adjusted_ad_${bin}`] = medianViewsAdjustedObj.mAfter;
+  output[`mean_views_adjusted_bd_${bin}`] = meanViewsAdjustedObj.mBefore;
+  output[`death_views_${bin}`] = death_views;
+  output[`death_views_adjusted_${bin}`] = death_views_adjusted;
+  output[`std_${bin}`] = std;
+  output[`iqr_${bin}`] = iqr;
+
+  return output;
+}
+
+function loadData({ bin, person }) {
+  const id = person.link.replace('/wiki/', '');
+  const file = `./output/people-bin-${bin}/${id}.csv`;
   return {
-    ...person,
-    bin: BIN,
-    median_views,
-    median_views_before: Math.floor(medianViewsObj.mBefore),
-    median_views_after: Math.floor(medianViewsObj.mAfter),
-    median_views_adjusted,
-    median_views_adjusted_before: Math.floor(medianViewsAdjustedObj.mBefore),
-    median_views_adjusted_after: Math.floor(medianViewsAdjustedObj.mAfter),
-    median_share,
-    median_share_before: Math.floor(medianShareObj.mBefore),
-    median_share_after: Math.floor(medianShareObj.mAfter),
-    max_views_adjusted,
-    max_views,
-    max_share,
-    max_change_before_views,
-    max_change_before_views_adjusted,
-    max_change_before_share,
-    mean_views_adjusted_before: Math.floor(meanViewsAdjustedObj.mBefore),
-    std,
-    iqr
+    data: clean(d3.csvParse(fs.readFileSync(file, 'utf-8'))),
+    bin,
+    person
   };
+}
+
+function calculate(person) {
+  const bins = [1, 2, 3, 7].map(bin => loadData({ bin, person }));
+  const withInfo = bins.map(addInfo).reduce(
+    (prev, cur) => {
+      return {
+        ...prev,
+        ...cur
+      };
+    },
+    { ...person }
+  );
+  return withInfo;
 }
 
 function init() {

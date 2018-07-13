@@ -10,7 +10,8 @@ const MIN_DAYS_PAD = 30;
 function clean(data) {
   return data.map(d => ({
     ...d,
-    max_share: +d.max_share
+    death_views_adjusted_2: +d.death_views_adjusted_2,
+    median_views_adjusted_bd_2: +d.median_views_adjusted_bd_2
   }));
 }
 
@@ -25,8 +26,8 @@ function init() {
   // filter by adjusted pageviews (must have median before death of at least 100)
   // filter by date (must be at least 30 days from edges)
   const filtered = data
-    .filter(d => d.max_views_adjusted >= 500000)
-    .filter(d => d.median_views_adjusted_before >= 100)
+    .filter(d => d.death_views_adjusted_2 >= 500000)
+    .filter(d => d.median_views_adjusted_bd_2 >= 100)
     .filter(d => {
       const dateStart = new Date(START.year, START.month, 1);
       const dateEnd = new Date();
