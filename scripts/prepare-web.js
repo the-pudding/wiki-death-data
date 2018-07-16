@@ -84,7 +84,7 @@ function init() {
           start: -INF,
           end: -1
         });
-        const after = getPageviewsByBin({ person, bin: 1, start: 2, end: INF });
+        const after = getPageviewsByBin({ person, bin: 1, start: 7, end: INF });
 
         const beforeN = before.map(d => +d.views_adjusted);
         const afterN = after.map(d => +d.views_adjusted);
