@@ -74,47 +74,49 @@ function init() {
   const careOutput = d3.csvFormat(careData);
   fs.writeFileSync('./web-data/care.csv', careOutput);
 
-  // before/after moving average (impact chart)
+  // after moving average (impact chart)
   const impactData = []
     .concat(
       ...peopleData.map(person => {
-        const before = getPageviewsByBin({
+        const after = getPageviewsByBin({
           person,
           bin: 1,
-          start: -INF,
-          end: -1
+          start: 23,
+          end: INF
         });
-        const after = getPageviewsByBin({ person, bin: 1, start: 7, end: INF });
 
-        const beforeN = before.map(d => +d.views_adjusted);
-        const afterN = after.map(d => +d.views_adjusted);
-        const mab = movingAverages.ma(beforeN, MA_PERIOD);
-        const maa = movingAverages.ma(afterN, MA_PERIOD);
-
-        const beforeWithM = before.map((d, i) => ({
-          ...d,
-          ma: mab[i],
-          before: true
-        }));
+        const afterVals = after.map(d => +d.views_adjusted);
+        const maa = movingAverages.ma(afterVals, MA_PERIOD);
 
         const afterWithM = after.map((d, i) => ({
           ...d,
+          median_before: +person.median_views_adjusted_bd_1,
           ma: maa[i],
-          before: false
+          views_adjusted: +afterVals[i]
         }));
 
-        const joined = beforeWithM.concat(afterWithM);
-
-        return joined;
+        return afterWithM;
       })
     )
-    .filter(d => Math.abs(d.bin_death_index) < 100)
+    .filter(d => +d.bin_death_index < 180 && +d.bin_death_index >= 30)
     .map(d => ({
-      pageid: d.pageid,
-      bin_death_index: d.bin_death_index,
-      ma: d.ma ? Math.floor(d.ma) : null,
-      before: d.before ? 1 : null
-    }));
+      ...d,
+      ma: d.ma ? Math.floor(d.ma) : null
+    }))
+    .map(d => {
+      return {
+        pageid: d.pageid,
+        bin_death_index: d.bin_death_index,
+        ma: d.ma,
+        diff: d.ma - d.median_before,
+        diff_percent: ((d.ma - d.median_before) / d.median_before).toFixed(2),
+        diff_views: d.views_adjusted - d.median_before,
+        diff_percent_views: (
+          (d.views_adjusted - d.median_before) /
+          d.median_before
+        ).toFixed(2)
+      };
+    });
 
   const impactOutput = d3.csvFormat(impactData);
   fs.writeFileSync('./web-data/impact.csv', impactOutput);
