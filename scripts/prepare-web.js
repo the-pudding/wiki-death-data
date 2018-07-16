@@ -33,13 +33,23 @@ function getPageviewsByBin({ person, bin, start, end }) {
   return output;
 }
 
+function zeroPad(number) {
+  return d3.format('02')(number);
+}
 function init() {
   mkdirp(outputDir);
 
+  const date = new Date();
+  const last_updated = `${date.getFullYear()}${zeroPad(
+    date.getMonth() + 1
+  )}${zeroPad(date.getDate() - 1)}`;
   // people
-  const peopleData = d3.csvParse(
-    fs.readFileSync('./output/people--details.csv', 'utf-8')
-  );
+  const peopleData = d3
+    .csvParse(fs.readFileSync('./output/people--details.csv', 'utf-8'))
+    .map(d => ({
+      ...d,
+      last_updated
+    }));
 
   const peopleOutput = d3.csvFormat(peopleData);
   fs.writeFileSync('./web-data/people.csv', peopleOutput);
