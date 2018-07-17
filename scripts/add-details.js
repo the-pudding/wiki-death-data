@@ -17,7 +17,7 @@ function getDetails(person) {
       if (err) reject(err);
       else if (resp.statusCode === 200) {
         const data = JSON.parse(body);
-        const { pageid, thumbnail, description, extract_html } = data;
+        const { pageid, thumbnail, description, extract } = data;
         const { canonical, display } = data.titles;
 
         const thumbnail_source = thumbnail ? thumbnail.source : null;
@@ -33,7 +33,7 @@ function getDetails(person) {
           thumbnail_source,
           thumbnail_width,
           thumbnail_height,
-          extract_html: extract_html.replace(/\n/g, '')
+          extract: extract.replace(/\n/g, '')
         });
       } else reject(resp.statusCode);
     });
