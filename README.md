@@ -49,7 +49,7 @@ Reduces the data to people who satisfy some quantiative criteria.
 
 #### `npm run add-details`
 
-Gets more detail info on each person from wiki.
+Gets more detail info on each person from wiki and custom spreadsheet.
 
 #### `npm run prepare-explore`
 

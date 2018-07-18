@@ -5,6 +5,19 @@ const request = require('request');
 const outputDir = './output';
 const BASE_URL = 'https://en.wikipedia.org/api/rest_v1/page/summary';
 
+function downloadSheet({ id, gid }) {
+  return new Promise((resolve, reject) => {
+    const base = 'https://docs.google.com/spreadsheets/u/1/d';
+    const url = `${base}/${id}/export?format=csv&id=${id}&gid=${gid}`;
+
+    request(url, (err, response, body) => {
+      if (err) reject(err);
+      const data = d3.csvParse(body);
+      resolve(data);
+    });
+  });
+}
+
 function getID(str) {
   return str.replace('/wiki/', '');
 }
@@ -40,9 +53,17 @@ function getDetails(person) {
   });
 }
 
-async function init() {
-  mkdirp(outputDir);
+function getInfo({ d, sheetData }) {
+  const match = sheetData.find(s => s.canonical === d.canonical);
+  if (!match) return {};
+  return {
+    industry: match.industry,
+    cause: match.cause_broad,
+    sudden: !!match.sudden
+  };
+}
 
+async function begin(sheetData) {
   const peopleData = d3.csvParse(
     fs.readFileSync('./output/people--filtered.csv', 'utf-8')
   );
@@ -63,8 +84,27 @@ async function init() {
     index += 1;
   }
 
-  const output = d3.csvFormat(withDetails);
+  const detailsWithSheet = withDetails.map(d => {
+    const info = getInfo({ d, sheetData });
+    return {
+      ...d,
+      ...info
+    };
+  });
+
+  const output = d3.csvFormat(detailsWithSheet);
   fs.writeFileSync('./output/people--details.csv', output);
+}
+
+function init() {
+  mkdirp(outputDir);
+
+  downloadSheet({
+    id: '1NhyrhMg-Pgl-1_TkGSKQ9QtfSjFRb0BvvcF1rB6Xkok',
+    gid: '1675841094'
+  })
+    .then(begin)
+    .catch(console.error);
 }
 
 init();

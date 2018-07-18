@@ -26,6 +26,9 @@ function init() {
     .then(result => {
       const data = clean(result.items);
       const output = d3.csvFormat(data);
+
+      const median = d3.median(data, d => d.views);
+      console.log({ median });
       fs.writeFileSync('./output/wiki-pageviews.csv', output);
     })
     .catch(console.error);
