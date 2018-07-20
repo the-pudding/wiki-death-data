@@ -25,7 +25,7 @@ Download the HTML for the year event pages from wiki that contain a list of all 
 
 #### `npm run parse-year-pages`
 
-Extract every person and their meta data from the event pages to create a single csv of all notable deaths from 2015-2018. _Important_ Adds in Beyonce for context. She is removed during `filter-population`.
+Extract every person and their meta data from the event pages to create a single csv of all notable deaths from 2015-2018.
 
 #### `npm run get-wiki-pageviews`
 

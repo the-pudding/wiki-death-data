@@ -4,8 +4,6 @@ const d3 = require('d3');
 const ss = require('simple-statistics');
 const outputDir = './output';
 
-const BIN = 2;
-
 function clean(data) {
   return data.map(d => ({
     ...d,
