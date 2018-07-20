@@ -6,6 +6,7 @@ const outputDir = './web-data';
 const MS_DAY = 86400000;
 const INF = 99999;
 const MA_PERIOD = 7;
+const PRINCE_ID = '57317';
 
 function getID(str) {
   return str.replace('/wiki/', '');
@@ -56,9 +57,11 @@ function init() {
 
   // by 48hrs pageviews (perspective chart)
   const perspectiveData = [].concat(
-    ...peopleData.map(person =>
-      getPageviewsByBin({ person, bin: 2, start: -50, end: 0 })
-    )
+    ...peopleData.map(person => {
+      const start = person.pageid === PRINCE_ID ? -50 : 0;
+      const v = getPageviewsByBin({ person, bin: 2, start, end: 0 });
+      return v;
+    })
   );
 
   const perspectiveOutput = d3.csvFormat(perspectiveData);
