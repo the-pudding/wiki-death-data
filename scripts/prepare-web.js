@@ -108,7 +108,7 @@ function init() {
         return afterWithM;
       })
     )
-    .filter(d => +d.bin_death_index < 180 && +d.bin_death_index >= 30)
+    .filter(d => +d.bin_death_index <= 120 && +d.bin_death_index >= 30)
     .map(d => ({
       ...d,
       ma: d.ma ? Math.floor(d.ma) : null

@@ -36,7 +36,6 @@ function getAverageSides({ person, data, metric, mode }) {
 
   const before = getSide({ data, deathDate, before: true });
   const after = getSide({ data, deathDate, before: false });
-
   const vBefore = before.map(d => d[metric]);
   const vAfter = after.map(d => d[metric]);
   const mBefore = mode === 'median' ? d3.median(vBefore) : d3.mean(vBefore);
@@ -60,47 +59,23 @@ function getDistribution({ person, data }) {
 }
 
 function addInfo({ data, bin, person }) {
-  // const median_views = Math.floor(d3.median(data, d => d.views));
-  // const median_views_adjusted = Math.floor(
-  //   d3.median(data, d => d.views_adjusted)
-  // );
-  // const median_share = Math.floor(d3.median(data, d => d.share));
-
-  // const max_views = d3.max(data, d => d.views);
-  // const max_views_adjusted = d3.max(data, d => d.views_adjusted);
-  // const max_share = d3.max(data, d => d.share);
+  const withViews = data.filter(d => d.views_adjusted);
   const di = data.find(d => d.bin_death_index === 0);
   const death_views = di.views;
   const death_views_adjusted = di.views_adjusted;
-  // const death_share = data[deathIndex].share;
-
-  // const medianViewsObj = getAverageSides({
-  //   person,
-  //   data,
-  //   metric: 'views',
-  //   mode: 'median'
-  // });
   const medianViewsAdjustedObj = getAverageSides({
     person,
-    data,
+    data: withViews,
     metric: 'views_adjusted',
     mode: 'median'
   });
-  // const medianShareObj = getAverageSides({
-  //   person,
-  //   data,
-  //   metric: 'share',
-  //   mode: 'median'
-  // });
-
   const meanViewsAdjustedObj = getAverageSides({
     person,
-    data,
+    data: withViews,
     metric: 'views_adjusted',
     mode: 'mean'
   });
 
-  const withViews = data.filter(d => d.views_adjusted);
   const { std, iqr } = getDistribution({ person, data: withViews });
 
   const output = {};

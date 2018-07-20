@@ -59,7 +59,8 @@ function getInfo({ d, sheetData }) {
   return {
     industry: match.industry,
     cause: match.cause_broad,
-    sudden: !!match.sudden
+    cause_specific: match.cause_specific,
+    description_short: match.description_short
   };
 }
 
