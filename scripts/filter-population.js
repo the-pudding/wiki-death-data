@@ -27,7 +27,7 @@ function init() {
   // filter by date (must be at least 30 days from edges)
   const filtered = data
     .filter(d => d.death_views_adjusted_2 >= 500000)
-    .filter(d => d.median_views_adjusted_bd_2 >= 100)
+    .filter(d => d.median_views_adjusted_bd_2 >= 500)
     .filter(d => {
       const dateStart = new Date(START.year, START.month, 1);
       const dateEnd = new Date();
