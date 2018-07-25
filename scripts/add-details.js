@@ -62,7 +62,8 @@ function getInfo({ d, sheetData }) {
     cause_specific: match.cause_specific,
 		description_short: match.description_short,
 		impact_annotation: match.impact_annotation,
-		perspective_show: match.perspective_show
+		perspective_show: match.perspective_show,
+		name: !!match.name ? match.name : d.name,
   };
 }
 
