@@ -60,10 +60,10 @@ function getInfo({ d, sheetData }) {
     industry: match.industry,
     cause: match.cause_broad,
     cause_specific: match.cause_specific,
-		description_short: match.description_short,
-		impact_annotation: match.impact_annotation,
-		perspective_show: match.perspective_show,
-		name: !!match.name ? match.name : d.name,
+    description_short: match.description_short,
+    impact_annotation: match.impact_annotation,
+    perspective_show: match.perspective_show,
+    display: !!match.display ? match.display : d.display
   };
 }
 
