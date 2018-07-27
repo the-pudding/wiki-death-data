@@ -63,6 +63,7 @@ function getInfo({ d, sheetData }) {
     description_short: match.description_short,
     impact_annotation: match.impact_annotation,
     impact_x: match.impact_x,
+    impact_dx: match.impact_dx,
     impact_dy: match.impact_dy,
     impact_type: match.impact_type,
     perspective_show: match.perspective_show,
