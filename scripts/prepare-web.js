@@ -80,6 +80,11 @@ function init() {
       );
       const cross = match ? +match.bin_death_index : INF;
       const filtered = after.filter(d => +d.bin_death_index <= cross);
+      // optimize
+      filtered.forEach(d => {
+        delete d.views;
+        delete d.timestamp_index;
+      });
       return filtered;
     })
   );
@@ -121,13 +126,13 @@ function init() {
         pageid: d.pageid,
         bin_death_index: d.bin_death_index,
         ma: d.ma,
-        diff: d.ma - d.median_before,
-        diff_percent: ((d.ma - d.median_before) / d.median_before).toFixed(2),
-        diff_views: d.views_adjusted - d.median_before,
-        diff_percent_views: (
-          (d.views_adjusted - d.median_before) /
-          d.median_before
-        ).toFixed(2)
+        // diff: d.ma - d.median_before,
+        diff_percent: ((d.ma - d.median_before) / d.median_before).toFixed(2)
+        // diff_views: d.views_adjusted - d.median_before,
+        // diff_percent_views: (
+        //   (d.views_adjusted - d.median_before) /
+        //   d.median_before
+        // ).toFixed(2)
       };
     });
 
