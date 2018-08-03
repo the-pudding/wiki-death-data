@@ -40,10 +40,17 @@ function zeroPad(number) {
 function init() {
   mkdirp(outputDir);
 
-  const date = new Date();
-  const last_updated = `${date.getFullYear()}${zeroPad(
-    date.getMonth() + 1
-  )}${zeroPad(date.getDate() - 1)}`;
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate() - 1;
+  if (day === 0) {
+    date = new Date(date.getTime() - MS_DAY);
+    month = date.getMonth() + 1;
+    day = date.getDate();
+  }
+
+  const last_updated = `${year}${zeroPad(month)}${zeroPad(day)}`;
   // people
   const peopleData = d3
     .csvParse(fs.readFileSync('./output/people--details.csv', 'utf-8'))
