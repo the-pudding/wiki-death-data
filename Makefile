@@ -1,11 +1,10 @@
-PHONY: clean-dir copy-data reproduce
+PHONY: clean-dir copy-data reproduce pudding
 
 clean-dir:
 	rm -rf output
 	mkdir output
 
 copy-data:
-	# cp explore-data/*.csv exploration/data/
 	cp web-data/*.csv /Users/russell/Pudding/projects/wiki-death/src/assets/data
 
 reproduce:
@@ -21,6 +20,7 @@ reproduce:
 	filter-population \
 	add-details \
 	prepare-web
-	# prepare-explore
 
+pudding:
+	make reproduce
 	make copy-data
